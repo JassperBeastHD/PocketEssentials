@@ -1,0 +1,52 @@
+==============================================================================================
+                                     PocketMine Essentials Package
+                                                by Kevin Wang
+----------------------------------------------------------------------------------------------
+                                     Package Version: 3.5.2-Beta
+----------------------------------------------------------------------------------------------
+Skype: kvwang98 ( The one without _rec after the username )
+E-Mail: kevin@cnkvha.com
+----------------------------------------------------------------------------------------------
+                                    Join My MCPE Server: 
+                                    mcpe.MineConquer.com
+==============================================================================================
+
+Config Samples(You can use them directly or customize them): 
+1: Server Ranks Config: 
+    You can use it on your public server, to know what ranks are in it please check the configs. 
+    Link: 
+    > http://forums.pocketmine.net/index.php?threads/826/
+
+*****[Details and Formats]*****
+1: To add a Permission Node for a command, add permission "&.COMMAND", such as "&.kill"
+2: You need to add Permission Nodes for commands before adding its Events Permission Nodes (If that command has PermissionNodes) . 
+3: For Developers, please read ReadMe_ForDevelopers.txt
+
+*****[Built-In Permission Nodes]*****
+
+Mute: 
+  1: pmess.mute.nomuting = Player can not be muted. 
+
+Server : 
+  1: server.flyinsurvival = Server will allow player fly in survival even they are not OP. 
+
+iControlU: 
+  1: pmess.icu.uncontrollable = Player can not be controlled. 
+
+Chest Lock : 
+(You need to add "&.lock" and "&.unlock" into the group to allow to use the command)
+  1: pmess.chestlock.canunlockothers = Players can unlock other people's chests. 
+
+DisguiseCraft: 
+(You need to add "&.d" into the group to allow to use the command)
+  1: pmess.disguisecraft.player = Players can disguise as a player with new name tag. 
+  2: pmess.disguisecraft.mob.all = Players can disguise as any mob. 
+  3: pmess.disguisecraft.mob.chicken = Players can disguise as a checken. 
+  4: pmess.disguisecraft.mob.cow = Players can disguise as a cow. 
+  5: pmess.disguisecraft.mob.pig = Players can disguise as a pig. 
+  6: pmess.disguisecraft.mob.sheep = Players can disguise as a sheep. 
+  7: pmess.disguisecraft.mob.zombie = Players can disguise as a zombie. 
+  8: pmess.disguisecraft.mob.creeper = Players can disguise as a creeper. 
+  9: pmess.disguisecraft.mob.skeleton = Players can disguise as a skeleton. '
+  10: pmess.disguisecraft.mob.spider = Players can disguise as a spider. 
+  11: pmess.disguisecraft.mob.pigzombie = Players can disguise as a pig zombie. 

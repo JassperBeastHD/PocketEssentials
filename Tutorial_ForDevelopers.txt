@@ -1,0 +1,27 @@
+==============================================================================================
+                                     PocketMine Essentials Package
+                                                by Kevin Wang
+----------------------------------------------------------------------------------------------
+                                     Package Version: 3.5.2-Beta
+----------------------------------------------------------------------------------------------
+Skype: kvwang98 ( The one without _rec after the username )
+E-Mail: kevin@cnkvha.com
+----------------------------------------------------------------------------------------------
+                                    Join My MCPE Server: 
+                                    mcpe.MineConquer.com
+==============================================================================================
+Tip: 
+1: In this article, {API} means a pointer which point to API, {Player} means a Player object. 
+
+
+*****[How to Check a Player's Permission]*****
+TIP: Both of them return bool. 
+--------
+$test = {API}->perm->checkPerm("Username", "PermissionNode.SubNode");
+--------
+
+*****[Check a Player's Mute Status]*****
+$ret = {API}->perm->checkMuteStatus("Username");
+
+*****[Do I need to register a Permission Node to the server]*****
+No, you don't. Just check them when you need. 

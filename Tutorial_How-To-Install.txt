@@ -1,0 +1,56 @@
+==============================================================================================
+                                     PocketMine Essentials Package
+                                                by Kevin Wang
+----------------------------------------------------------------------------------------------
+                                     Package Version: 3.5.2-Beta
+----------------------------------------------------------------------------------------------
+Skype: kvwang98 ( The one without _rec after the username )
+E-Mail: kevin@cnkvha.com
+----------------------------------------------------------------------------------------------
+                                    Join My MCPE Server: 
+                                    mcpe.MineConquer.com
+==============================================================================================
+
+Please consider to donate if you like our plugin: 
+[ http://www.MineConquer.com/donate.html ] 
+
+How to Install: 
+  1: Copy all files(include folder) in "plugins" folder here into server program's "plugin" folder. 
+  2: Run your server. 
+  3: Set up permissions from console or use sample configs. 
+  3: Done! 
+
+How to Upgrade: 
+  1: Remove all old version plugins of PocketEssentials. 
+  2: Install the new version normally. 
+
+How to Set Up Permissions: 
+  Please read "Tutorial_Set-Up-Permissions.txt" for instructions. 
+
+Tutorials: 
+ - Tutorial_Set-Up-Permissions.txt
+ - http://wiki.MineConquer.com/pmess/
+ - http://www.YouTube.com/VanishedKevin
+
+Bug Report: 
+  - http://www.mineconquer.com/2013/09/pocketessentials-bug-report/
+
+File Details: 
+  Added Files: 
+  - Plugins/KVHASystem.PHP - Main plugin includes Vanish, Disguise Plugin. 
+  - Plugins/WorldTeleport.PHP - Teleport to another world when player standing at a point. 
+  - Src/API/InfWorldAPI.PHP - Infinite world API with multi-world controller. 
+
+  Changed Files: 
+  - Src/API/Entity.PHP - To let entity not spawning when player is vanished. 
+  - Src/Player.PHP - Added few variables and some public functions( [switchVanish($hideMessage)] ). 
+  - Src/World/Entity.PHP - To let entity not spawning when player is vanished. 
+  - Src/API/ServerAPI.PHP - To load InfWorldAPI.PHP
+
+Contact: 
+  Skype: kvwang98 ( The one without _rec after the username )
+  E-Mail: kevin@cnkvha.com
+
+Donate:
+  PayPal: kevin@cnkvha.com
+  AliPay(China): kevinwang@mail.be

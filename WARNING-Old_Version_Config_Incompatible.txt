@@ -1,0 +1,23 @@
+==============================================================================================
+                                     PocketMine Essentials Package
+                                                by Kevin Wang
+----------------------------------------------------------------------------------------------
+                                     Package Version: 3.5.2-Beta
+----------------------------------------------------------------------------------------------
+Skype: kvwang98 ( The one without _rec after the username )
+E-Mail: kevin@cnkvha.com
+----------------------------------------------------------------------------------------------
+                                    Join My MCPE Server: 
+                                    mcpe.MineConquer.com
+==============================================================================================
+
+WARNING: 
+PocketEssentials 3.0.0-Beta and earlier configs are NOT compatible anymore. 
+
+How to Fix: 
+1: Delete all folders in plugins folder from your PocketMine folder and install as normal. 
+2: Re-Setup permissions. 
+3: Permissions for commands are "&.COMMAND" now, such as "&.kill". 
+4: You need to allow to use the command if it has permission nodes check inside it if you want to 
+   use only that permission node. No need to add command if you want to dis-allow all features in 
+   that command. 
