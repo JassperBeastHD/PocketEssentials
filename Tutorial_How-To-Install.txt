@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.2-Beta
+                                     Package Version: 3.5.3-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -16,6 +16,7 @@ Please consider to donate if you like our plugin:
 
 How to Install: 
   1: Copy all files(include folder) in "plugins" folder here into server program's "plugin" folder. 
+      Don't forget to copy "PMEssModules" folder to plugins folder also. 
   2: Run your server. 
   3: Set up permissions from console or use sample configs. 
   3: Done! 

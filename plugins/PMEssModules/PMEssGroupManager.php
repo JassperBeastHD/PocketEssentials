@@ -5,7 +5,7 @@
 __PocketMine Plugin__
 name=PMEss-GroupManager
 description=PocketEssentials GroupManager
-version=3.5.2-Beta
+version=3.5.4-Beta
 author=Kevin Wang
 class=PMEssGM
 apiversion=10
@@ -55,18 +55,25 @@ class PMEssGM implements Plugin{
 	public $userDir;
 	public $groupDir;
 	
+	public $disabled = false;
+	
 	public function __construct(ServerAPI $api, $server = false){
 		$this->api = $api;
 	}
 
 	public function init(){
-		//$this->Init_Config();
+		$this->Init_Config();
 		$this->Init_Folders();
 		$this->Init_DefaultGroup();
+		$this->api->addHandler("pmess.groupmanager.getstate", array($this, "hdlGetState"), 2);
+		if($this->disabled == true){
+			console(FORMAT_GREEN . " GroupManager Disabled! ");
+			return;
+		}
 		
 		$this->api->addHandler("player.join", array($this, "handler"), 5);
 		$this->api->addHandler("player.spawn", array($this, "handler"), 5);
-		$this->api->addHandler("player.chat", array($this, "handler"), 1);
+		$this->api->addHandler("player.chat", array($this, "handler"), 2);
 		$this->api->addHandler("op.check", array($this, "handler"), 1);
 		$this->api->addHandler("console.command", array($this, "handler"), 1);
 		
@@ -97,6 +104,13 @@ class PMEssGM implements Plugin{
 	}
 
 	public function Init_Config(){
+		$GMCfg = new Config($this->api->plugin->configPath($this)."/Config.yml", CONFIG_YAML, array("Disable-GroupManager" => false));
+		if($GMCfg->get("Disable-GroupManager")==true){
+			$this->disabled = true;
+		}else{
+			$this->disabled = false;
+		}
+		unset($GMCfg);
 	}
 	
 	public function Init_Folders(){
@@ -110,6 +124,10 @@ class PMEssGM implements Plugin{
 		$groupCfg = new Config($this->groupDir."/default.yml", CONFIG_YAML, array("Name" => "Default", "Perms" => $this->defaultPerms, "Members" => array()));
 	}
 	
+	public function hdlGetState(&$data, $event){
+		return($this->disabled);
+	}
+	
 	public function handler(&$data, $event){
 		switch($event){
 			case "player.join":
@@ -117,14 +135,14 @@ class PMEssGM implements Plugin{
 					$data->sendChat("ERROR: Username can only include Letters, Numbers and Underscores. ");
 					return(false);
 				}
-				$data->sendChat(" \n \n This server is using \nPocketEssentials! \n ");
 				break;
 			case "player.spawn":
+				$data->sendChat(" \n \n This server is using \nPocketEssentials! \n ");
 				$this->checkExpireEvent($data);
 				break;
 			case "player.chat":
 				if($data["player"]->icu_underCtl == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
-				if($this->api->session->sessions[$data["player"]->CID]["dPState"]){
+				if(isset($this->api->session->sessions[$data["player"]->CID]["dPState"]) and $this->api->session->sessions[$data["player"]->CID]["dPState"] == true){
 					$un = $this->api->session->sessions[$data["player"]->CID]["dPUsername"];
 				}else{
 					$un = $data["player"]->username;

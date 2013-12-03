@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.2-Beta
+                                     Package Version: 3.5.3-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,10 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.5.3 Beta ( 2013/11/25 )
+      - Added a config for GroupManger to disable it. 
+      - Fixed server crash when disguising as a mob. 
+      - Fixed chat username doesn't change when disguising as a player. 
   - 3.5.2 Beta ( 2013/11/24 )
       - Added a loader to load all things in correct order
   - 3.5.1 Beta ( 2013/11/24 )

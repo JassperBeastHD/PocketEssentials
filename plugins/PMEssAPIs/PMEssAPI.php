@@ -19,6 +19,9 @@ class PMEssAPI{
 		$this->server = ServerAPI::request();
 	}
 	
+	public function init(){
+	}
+	
 	public function switchVanish($player, $silenced = true){
 		if(!($player instanceof Player)){
 			$p = $this->server->api->player->get($player);

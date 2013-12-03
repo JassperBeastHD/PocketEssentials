@@ -3,7 +3,7 @@
 __PocketMine Plugin__
 name=PMEssentials-RootLoader
 description=Load PocketEssentials Modules in Correct Order
-version=3.5.2-Beta
+version=3.5.4-Beta
 author=Kevin Wang
 class=PMEssRootLoader
 apiversion=10
@@ -30,11 +30,17 @@ class PMEssRootLoader implements Plugin{
 		console(FORMAT_GREEN . "PocketEssentials is loading...");
 		console(FORMAT_GREEN . " Loading PocketEssentials APIs...");
 		//Load Necessary APIs In Order
-		$this->api->loadAPI("pmess", "PMEssAPI", FILE_PATH . "plugins/PMEssModules/APIs/");
-		$this->api->loadAPI("infworld", "PMEssInfWorldAPI", FILE_PATH . "plugins/PMEssModules/APIs/");
-		$this->api->loadAPI("file", "PMEssFileAPI", FILE_PATH . "plugins/PMEssModules/APIs/");
-		$this->api->loadAPI("perm", "PMEssPermAPI", FILE_PATH . "plugins/PMEssModules/APIs/");
-		$this->api->loadAPI("session", "PMEssSessionAPI", FILE_PATH . "plugins/PMEssModules/APIs/");
+		$this->api->loadAPI("pmess", "PMEssAPI", FILE_PATH . "plugins/PMEssAPIs/");
+		$this->api->loadAPI("infworld", "PMEssInfWorldAPI", FILE_PATH . "plugins/PMEssAPIs/");
+		$this->api->loadAPI("file", "PMEssFileAPI", FILE_PATH . "plugins/PMEssAPIs/");
+		$this->api->loadAPI("perm", "PMEssPermAPI", FILE_PATH . "plugins/PMEssAPIs/");
+		$this->api->loadAPI("session", "PMEssSessionAPI", FILE_PATH . "plugins/PMEssAPIs/");
+		$this->api->pmess->init();
+		$this->api->infworld->init();
+		$this->api->file->init();
+		$this->api->perm->init();
+		$this->api->session->init();
+		
 		console(FORMAT_GREEN . " Loading PocketEssentials Modules...");
 		//Load Plugins Now
 		$this->api->plugin->load(FILE_PATH . "plugins/PMEssModules/PMEssCore.php");

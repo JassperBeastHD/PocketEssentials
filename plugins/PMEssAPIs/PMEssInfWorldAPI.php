@@ -20,7 +20,7 @@ class PMEssInfWorldAPI{
         $this->server = ServerAPI::request();
     }
 
-    public function init(){
+    public  function init(){
 
 		console("[Worlds] Loading All Worlds...");
         $this->loadAllWorlds();
@@ -39,7 +39,7 @@ class PMEssInfWorldAPI{
 					console("[Worlds] Level " . $f . " is in generating. \n");
                     $this->server->api->level->generateLevel($f);
                     $this->server->api->level->loadLevel($f);
-					console("[Worlds]Level " . $f . " has generated. \n");
+					console("[Worlds] Level " . $f . " has generated. \n");
                 }
             }
         }
@@ -69,17 +69,17 @@ class PMEssInfWorldAPI{
 						$output .= $this->cmdHelp("1");
 						break;
 					case "list":
-						$lstcnt = 0;
-						foreach($this->server->api->level->levels as $l)
-						{
-							$lstcnt++;
-							$output .= $l->getName() . "(" . count($l->players) . ") ";
-							if($lstcnt % 4 == 0){
-								$output .= "\n";
+						$output .= "Loaded Worlds: \n";
+						$wCnt = 0;
+				        $path = DATA_PATH."worlds/";
+						$files = scandir($path);
+						foreach($files as $f) {
+							if($this->server->api->level->get($f) != false){
+								$wCnt++;
+								$output .= $f . " ";
+								if($wCnt % 4 == 0){$output .= "\n";}
 							}
 						}
-						$output .= "\n";
-						$output .= "[OP]See all worlds include unloaded, type: \n/w list u";
 						break;
 					case "create":
 						$output .= "You need to give one more argument. \nIt looks like: \n/world create [WorldName] [normal/flat]";
@@ -294,12 +294,7 @@ class PMEssInfWorldAPI{
 	
 	public function checkLevelExist($levelName)
 	{
-		if($this->server->api->level->loadLevel($levelName) == true)
-		{
-			$this->server->api->level->unloadLevel($this->server->api->level->get($levelName));
-			return(true);
-		}
-		return(false);
+		return($this->server->api->level->levelExists($levelName));
 	}
 	
 	private function cmdHelp($page)

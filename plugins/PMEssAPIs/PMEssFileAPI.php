@@ -16,6 +16,10 @@ class PMEssFileAPI{
 	function __construct(){
 		$this->server = ServerAPI::request();
 	}
+	
+	public function init(){
+	}
+	
 	public function SafeCreateFolder($path){
 		if (!file_exists($path) and !is_dir($path)){
 			mkdir($path);

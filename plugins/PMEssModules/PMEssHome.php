@@ -2,7 +2,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Home
-version=3.5.2-Beta
+version=3.5.4-Beta
 author=Kevin Wang
 class=PMEssHome
 apiversion=10

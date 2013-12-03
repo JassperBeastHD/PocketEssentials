@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-TPRequests
-version=3.5.2-Beta
+version=3.5.4-Beta
 author=Kevin Wang
 class=PMEssTPReqs
 apiversion=10

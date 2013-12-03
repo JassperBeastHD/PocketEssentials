@@ -2,7 +2,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-iControlU
-version=3.5.2-Beta
+version=3.5.4-Beta
 author=Kevin Wang
 class=PMEssICU
 apiversion=10
@@ -171,7 +171,7 @@ class PMEssICU implements Plugin{
 	}
 	
 	public function hdlCheckUnderIcu(&$data, $event){
-		if($this->api->session->sessions[$data["player"]->CID]["icu_underCtl"]){
+		if(isset($this->api->session->sessions[$data["player"]->CID]["icu_underCtl"]) and $this->api->session->sessions[$data["player"]->CID]["icu_underCtl"]){
 			return(false);
 		}else{
 			return(null);
