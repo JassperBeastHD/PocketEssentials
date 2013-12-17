@@ -10,18 +10,6 @@ E-Mail: kevin@cnkvha.com
                                     Join My MCPE Server: 
                                     mcpe.MineConquer.com
 ==============================================================================================
-Tip: 
-1: In this article, {API} means a pointer which point to API, {Player} means a Player object. 
 
-
-*****[How to Check a Player's Permission]*****
-TIP: Both of them return bool. 
---------
-$test = {API}->perm->checkPerm("Username", "PermissionNode.SubNode");
---------
-
-*****[Check a Player's Mute Status]*****
-$ret = {API}->perm->checkMuteStatus("Username");
-
-*****[Do I need to register a Permission Node to the server]*****
-No, you don't. Just check them when you need. 
+To use the plugins depend on our PocketEssentials API, you need to: 
+Copy the plugin into the "PMEssPlugins" folder into the "plugins" folder of your server. 

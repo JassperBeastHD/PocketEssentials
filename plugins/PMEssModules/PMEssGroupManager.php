@@ -5,10 +5,10 @@
 __PocketMine Plugin__
 name=PMEss-GroupManager
 description=PocketEssentials GroupManager
-version=3.5.4-Beta
+version=3.5.5-Alpha
 author=Kevin Wang
 class=PMEssGM
-apiversion=10
+apiversion=11
 */
 
 
@@ -55,7 +55,7 @@ class PMEssGM implements Plugin{
 	public $userDir;
 	public $groupDir;
 	
-	public $disabled = false;
+	public $enabled = true;
 	
 	public function __construct(ServerAPI $api, $server = false){
 		$this->api = $api;
@@ -66,7 +66,7 @@ class PMEssGM implements Plugin{
 		$this->Init_Folders();
 		$this->Init_DefaultGroup();
 		$this->api->addHandler("pmess.groupmanager.getstate", array($this, "hdlGetState"), 2);
-		if($this->disabled == true){
+		if($this->enabled == false){
 			console(FORMAT_GREEN . " GroupManager Disabled! ");
 			return;
 		}
@@ -105,10 +105,10 @@ class PMEssGM implements Plugin{
 
 	public function Init_Config(){
 		$GMCfg = new Config($this->api->plugin->configPath($this)."/Config.yml", CONFIG_YAML, array("Disable-GroupManager" => false));
-		if($GMCfg->get("Disable-GroupManager")==true){
-			$this->disabled = true;
+		if($GMCfg->get("Disable-GroupManager") == true){
+			$this->enabled = false;
 		}else{
-			$this->disabled = false;
+			$this->enabled = true;
 		}
 		unset($GMCfg);
 	}
@@ -125,7 +125,7 @@ class PMEssGM implements Plugin{
 	}
 	
 	public function hdlGetState(&$data, $event){
-		return($this->disabled);
+		return($this->enabled);
 	}
 	
 	public function handler(&$data, $event){

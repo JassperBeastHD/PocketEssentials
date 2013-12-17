@@ -2,10 +2,10 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Mute
-version=3.5.4-Beta
+version=3.5.5-Alpha
 author=Kevin Wang
 class=PMEssMute
-apiversion=10
+apiversion=11
 */
 
 /* 

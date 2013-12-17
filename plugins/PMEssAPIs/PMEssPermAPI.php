@@ -30,8 +30,11 @@ class PMEssPermAPI{
 	Return: bool
 	*/
 	public function checkUserPerm($username, $node){
-		if($this->server->api->dhandle("pmess.groupmanager.getstate", array()) == true){return($this->server->api->ban->isOp($username));}
-		return($this->server->api->dhandle("pmess.groupmanager.checkperm", array("Username"=>$username, "PermNode" => strtolower($node))));
+		if($this->server->api->dhandle("pmess.groupmanager.getstate", array()) == true){
+			return($this->server->api->dhandle("pmess.groupmanager.checkperm", array("Username"=>$username, "PermNode" => strtolower($node))));
+		}else{
+			return($this->server->api->ban->isOp($username));
+		}
 	}
 	
 	public function checkPerm($username, $node){

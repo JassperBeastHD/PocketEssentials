@@ -4,10 +4,10 @@
 /*
 __PocketMine Plugin__
 name=PocketEssentials-ChestLock
-version=3.5.4-Beta
+version=3.5.5-Alpha
 author=Kevin Wang
 class=PMEssChestLock
-apiversion=10
+apiversion=11
 */
 
 /*   Built-In Permission Node(s): 

@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.3-Beta
+                                     Package Version: 3.5.5-Alpha
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,12 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.5.5 Alpha ( 2013/12/17 )
+      - Supported PocketMine-MP Alpha_1.3.11dev ( MCPE 0.8.0 )
+        - Added PowerTool ( /pt ), touch a block by holding a specified item to run a command. 
+        - Fixed bugs when disabled GroupManager. 
+  - 3.5.4 Alpha ( 2013/12/6 )
+      - Fixed some errors when doing something(chat, command, break/place block, etc. ). 
   - 3.5.3 Beta ( 2013/11/25 )
       - Added a config for GroupManger to disable it. 
       - Fixed server crash when disguising as a mob. 

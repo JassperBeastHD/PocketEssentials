@@ -2,10 +2,10 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-iControlU
-version=3.5.4-Beta
+version=3.5.5-Alpha
 author=Kevin Wang
 class=PMEssICU
-apiversion=10
+apiversion=11
 */
 
 /* 
@@ -68,7 +68,7 @@ class PMEssICU implements Plugin{
 				if(count($arg)!=1){
 					return("Usage: \n/icu control [Username]");
 				}
-				if($this->api->session->sessions[$issuer->CID]["icu_inCtl"]==true){
+				if(isset($this->api->session->sessions[$issuer->CID]["icu_inCtl"]) and $this->api->session->sessions[$issuer->CID]["icu_inCtl"]==true){
 					return("You are now in controlling: \n" . $this->api->session->sessions[$issuer->CID]["icu_targetUsername"]);
 				}
 				$player = $this->api->player->get($arg[0]);

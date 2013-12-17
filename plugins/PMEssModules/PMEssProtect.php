@@ -3,10 +3,10 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Protect
-version=3.5.4-Beta
+version=3.5.5-Alpha
 author=Kevin Wang
 class=PMEssProtect
-apiversion=10
+apiversion=11
 */
 
 /* 
