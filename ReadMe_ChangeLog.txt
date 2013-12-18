@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.6-Alpha
+                                     Package Version: 3.5.7-Alpha
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,9 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.5.7 Alpha ( 2013/12/18 )
+      - Fixed Portal to World errors and bugs. 
+      - Fixed the Undefined variable "isVanished" error bug randomly. 
   - 3.5.6 Alpha ( 2013/12/18 )
       - Added Colorful Chat support. 
         ( Use $X, which X is color code, the same as PC color code. )

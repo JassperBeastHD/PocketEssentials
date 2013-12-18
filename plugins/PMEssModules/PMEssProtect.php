@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Protect
-version=3.5.6-Alpha
+version=3.5.7-Alpha
 author=Kevin Wang
 class=PMEssProtect
 apiversion=11

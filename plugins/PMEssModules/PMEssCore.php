@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Core
-version=3.5.6-Alpha
+version=3.5.7-Alpha
 author=Kevin Wang
 class=PMEssCore
 apiversion=11
@@ -115,7 +115,7 @@ class PMEssCore implements Plugin{
 				}
 				break;
 			case "player.teleport.level":
-				if($this->api->session->sessions[$data["player"]->CID]["isVanished"]){
+				if(isset($this->api->session->sessions[$data["player"]->CID]["isVanished"]) and $this->api->session->sessions[$data["player"]->CID]["isVanished"]){
 					$this->api->session->sessions[$data["player"]->CID]["isVanished"] = false;
 					$data["player"]->sendChat("You are UN-Vanished due \nto world change! ");
 				}

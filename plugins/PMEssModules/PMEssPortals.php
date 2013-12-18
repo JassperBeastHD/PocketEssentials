@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Portals
-version=3.5.6-Alpha
+version=3.5.7-Alpha
 author=Kevin Wang
 class=PMEssPortals
 apiversion=11
@@ -127,7 +127,7 @@ class PMEssPortals implements Plugin{
 					$posY = (int)$posArr[1];
 					$posZ = (int)$posArr[2];
 					$posWorld = $posArr[3];
-					if(intval($data->x) == $posX and intval($data->y) == $posY and intval($data->z) == $posZ and strtolower($data->player->level->getName) == strtolower($posWorld) )
+					if(intval($data->x) == $posX and intval($data->y) == $posY and intval($data->z) == $posZ and strtolower($data->player->level->getName()) == strtolower($posWorld) )
 					{
 						/*
 						if($data->player->dPState == false)
@@ -139,7 +139,7 @@ class PMEssPortals implements Plugin{
 						*/
 						$data->player->sendChat("Teleporting " . $data->player->iusername . " to world: " . $world);
 						$targetWorldSetting = "w:" . $world;
-						$this->api->player->teleport($data->player->iusername, $targetWorldSetting);
+						$this->api->player->teleport($data->player->username, $targetWorldSetting);
 						break;
 					}
 				}
