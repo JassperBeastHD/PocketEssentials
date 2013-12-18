@@ -3,7 +3,7 @@
 __PocketMine Plugin__
 name=PMEssentials-RootLoader
 description=Load PocketEssentials Modules in Correct Order
-version=3.5.5-Alpha
+version=3.5.6-Alpha
 author=Kevin Wang
 class=PMEssRootLoader
 apiversion=11
@@ -55,9 +55,32 @@ class PMEssRootLoader implements Plugin{
 		$this->api->plugin->load(FILE_PATH . "plugins/PMEssModules/PMEssRedstone.php");
 		$this->api->plugin->load(FILE_PATH . "plugins/PMEssModules/PMEssTPRequests.php");
 		$this->api->plugin->load(FILE_PATH . "plugins/PMEssModules/PMEssPowerTool.php");
+		console(FORMAT_GREEN . "Loading external plugins based on PMEss... ");
+		$this->loadAllPMEssPlugins();
+		console(FORMAT_GREEN . "External plugins based on PMEss are loaded! ");
 		console(FORMAT_GREEN . "PocketEssentials loaded successfully! ");
 	}
 	
+	public function loadAllPMEssPlugins(){
+	    $path = DATA_PATH."plugins/PMEssPlugins/";
+        $files = scandir($path);
+        foreach($files as $f) {
+            if ($f !== "." && $f !== ".." && !(is_dir($path.$f))) {
+                //Check extension
+				if(strtolower($this->getExtension($f)) == "php" or strtolower($this->getExtension($f)) == "pmf"){
+					console(FORMAT_YELLOW . "[Plugins for PMEss]" . FORMAT_RESET . " Loading external plugin " . FORMAT_GREEN . $f . FORMAT_RESET . " ...");
+					$this->api->plugin->load($path.$f);
+					console(FORMAT_YELLOW . "[Plugins for PMEss]" . FORMAT_RESET . " Loaded external plugin " . FORMAT_GREEN . $f . FORMAT_RESET . " !");
+				}
+            }
+        }
+	}
+	
+	function getExtension($file) 
+	{ 
+		return pathinfo($file, PATHINFO_EXTENSION); 
+	}
+
 	public function init(){
 	}
 	

@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Core
-version=3.5.5-Alpha
+version=3.5.6-Alpha
 author=Kevin Wang
 class=PMEssCore
 apiversion=11
@@ -56,7 +56,7 @@ class PMEssCore implements Plugin{
 		$this->api->session->setDefaultData("dMState", false); 
 		$this->api->session->setDefaultData("dMData", 0x00);
 		
-		$this->api->addHandler("player.chat", array($this, "handleEvent"), 2);
+		$this->api->addHandler("player.chat", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.interact", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.teleport.level", array($this, "handleEvent"), 1);
 		
@@ -84,25 +84,17 @@ class PMEssCore implements Plugin{
 	public function handleEvent(&$data, $event){
 		switch($event){
 			case "player.chat":
-				if($data["player"]->icu_underCtl == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
-				
-				if($this->api->dhandle("pmess.groupmanager.getstate", array()) == true){
+				if($this->api->session->getData($data["player"]->CID, "icu_underCtl") == null or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
+				if($this->api->dhandle("pmess.groupmanager.getstate", array()) == false){
+					//If GroupManager is disabled
 					if(@$this->api->session->sessions[$data["player"]->CID]["dPState"]){
 						$un = $this->api->session->sessions[$data["player"]->CID]["dPUsername"];
 					}else{
 						$un = $data["player"]->username;
 					}
-					$msg = $data["message"];
+					$msg = str_replace("$", "§", $data["message"]);
 					$this->api->chat->send(false, $un . ": \n" . $msg);
 					return(false);
-				}else{
-					if(isset($this->api->session->sessions[$data["player"]->CID]["dPState"]) and $this->api->session->sessions[$data["player"]->CID]["dPState"]){
-						$data["dPState"] = true;
-						$data["dPUsername"] = $this->api->session->sessions[$data["player"]->CID]["dPUsername"];
-					}else{
-						$data["dPState"] = false;
-					}
-					return;
 				}
 				break;
 			case "player.interact":

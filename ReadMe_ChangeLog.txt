@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.5-Alpha
+                                     Package Version: 3.5.6-Alpha
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,12 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.5.6 Alpha ( 2013/12/18 )
+      - Added Colorful Chat support. 
+        ( Use $X, which X is color code, the same as PC color code. )
+        ( Currently only work on console.  )
+      - Fixed username bug when disguising as a player
+      - Fixed loading external plugins depends on PMEss
   - 3.5.5 Alpha ( 2013/12/17 )
       - Supported PocketMine-MP Alpha_1.3.11dev ( MCPE 0.8.0 )
         - Added PowerTool ( /pt ), touch a block by holding a specified item to run a command. 

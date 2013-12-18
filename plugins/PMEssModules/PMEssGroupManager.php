@@ -5,7 +5,7 @@
 __PocketMine Plugin__
 name=PMEss-GroupManager
 description=PocketEssentials GroupManager
-version=3.5.5-Alpha
+version=3.5.6-Alpha
 author=Kevin Wang
 class=PMEssGM
 apiversion=11
@@ -141,14 +141,21 @@ class PMEssGM implements Plugin{
 				$this->checkExpireEvent($data);
 				break;
 			case "player.chat":
-				if($data["player"]->icu_underCtl == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
+				if($this->api->session->getData($data["player"]->CID, "icu_underCtl") == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
 				if(isset($this->api->session->sessions[$data["player"]->CID]["dPState"]) and $this->api->session->sessions[$data["player"]->CID]["dPState"] == true){
 					$un = $this->api->session->sessions[$data["player"]->CID]["dPUsername"];
 				}else{
 					$un = $data["player"]->username;
 				}
-				$msg = $data["message"];
-				$this->api->chat->send(false, $this->getUserPrefix($un) . $data["player"]->username . $this->getUserSuffix($data["player"]->username) . ": \n" . $msg);
+				if($this->api->perm->checkPerm($data["player"]->username, "pmess.chat.nocolor")){
+					$msg = $data["message"];
+					if(strpos($msg, "$") != false){
+						$data["player"]->sendChat(COLOR_RED . "You can not talk in color. \nBecause you *have* this permission node: \npmess.chat.nocolor");
+					}
+				}else{
+					$msg = str_replace("$", "§", $data["message"]);
+				}
+				$this->api->chat->send(false, $this->getUserPrefix($un) . $un . $this->getUserSuffix($un) . ": \n" . $msg);
 				return(false);
 				break;
 			case "op.check":

@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Portals
-version=3.5.5-Alpha
+version=3.5.6-Alpha
 author=Kevin Wang
 class=PMEssPortals
 apiversion=11
