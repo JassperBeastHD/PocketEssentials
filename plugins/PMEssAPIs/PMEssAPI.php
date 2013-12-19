@@ -31,7 +31,10 @@ class PMEssAPI{
 				return(false);
 			}
 		}
-		if($this->server->api->session->sessions[$player->CID]["isVanished"]){
+		if(!(isset($this->server->api->session->sessions[$player->CID]["isVanished"]))){
+			$this->server->api->session->sessions[$player->CID]["isVanished"] = false;
+		}
+		if($this->server->api->session->sessions[$player->CID]["isVanished"] == false){
 			foreach($issuer->level->players as $p)
 			{
 				if(strtolower($issuer->eid) != strtolower($p->eid))

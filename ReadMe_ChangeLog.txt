@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.5.7-Alpha
+                                     Package Version: 3.6.0-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,11 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.6.0 Alpha ( 2013/12/19 )
+      - Fixed the iControlU bug
+      - Added Disguise as a Primed TNT
+      - Added Disguise as a Moveable Block
+      - Rewrote the DisguiseCraft code structure
   - 3.5.7 Alpha ( 2013/12/18 )
       - Fixed Portal to World errors and bugs. 
       - Fixed the Undefined variable "isVanished" error bug randomly. 

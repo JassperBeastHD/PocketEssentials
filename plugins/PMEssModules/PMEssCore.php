@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Core
-version=3.5.7-Alpha
+version=3.6.0-Beta
 author=Kevin Wang
 class=PMEssCore
 apiversion=11
@@ -25,6 +25,8 @@ E-Mail: kevin@cnkvha.com
 
 class PMEssCore implements Plugin{
 	private $api;
+	private $dEData = array();
+	
 	public function __construct(ServerAPI $api, $server = false){
 		$this->api = $api;
 	}
@@ -55,8 +57,14 @@ class PMEssCore implements Plugin{
 		$this->api->session->setDefaultData("dPState", false); 
 		$this->api->session->setDefaultData("dMState", false); 
 		$this->api->session->setDefaultData("dMData", 0x00);
+		$this->api->session->setDefaultData("dEState", false); 
+		$this->api->session->setDefaultData("dEType", 0);  //0 = none, 1 = primed TNT, 2 = Block
+		$this->api->session->setDefaultData("dEBlockID", -1); 
+		
+		$this->api->schedule(1, array($this, "timerMoveEntity"), array(), true);
 		
 		$this->api->addHandler("player.chat", array($this, "handleEvent"), 1);
+		$this->api->addHandler("player.quit", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.interact", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.teleport.level", array($this, "handleEvent"), 1);
 		
@@ -81,10 +89,27 @@ class PMEssCore implements Plugin{
 	
 	}
 	
+	public function timerMoveEntity(){
+		foreach($this->dEData as $p){
+			if($p instanceof Player){
+				$players = $p->level->players;
+				unset($players[$p->CID]);
+				$this->api->player->broadcastPacket($players, MC_MOVE_ENTITY_POSROT, array(
+					"eid" => $p->eid,
+					"x" => $p->entity->x,
+					"y" => $p->entity->y+0.5,
+					"z" => $p->entity->z,
+					"yaw" => $p->entity->yaw,
+					"pitch" => $p->entity->pitch
+				));
+			}
+		}
+	}
+	
 	public function handleEvent(&$data, $event){
 		switch($event){
 			case "player.chat":
-				if($this->api->session->getData($data["player"]->CID, "icu_underCtl") == null or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
+				if($this->api->session->getData($data["player"]->CID, "icu_underCtl") == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
 				if($this->api->dhandle("pmess.groupmanager.getstate", array()) == false){
 					//If GroupManager is disabled
 					if(@$this->api->session->sessions[$data["player"]->CID]["dPState"]){
@@ -99,7 +124,7 @@ class PMEssCore implements Plugin{
 				break;
 			case "player.interact":
 				if($data["entity"]->class != ENTITY_PLAYER){return(null);}
-				if($data["entity"]->player->getSlot($data["entity"]->player->slot) != IRON_SWORD){return(null);}
+				if($data["entity"]->player->getSlot($data["entity"]->player->slot)->getID() != IRON_SWORD){return(null);}
 				if(!($this->api->session->sessions[$data["entity"]->player->CID]["superIS_State"])){return(null);}
 				$cid = $data["entity"]->player->CID;
 				if($this->api->session->sessions[$cid]["superIS"] == "kill"){
@@ -120,6 +145,9 @@ class PMEssCore implements Plugin{
 					$data["player"]->sendChat("You are UN-Vanished due \nto world change! ");
 				}
 				return(null);
+				break;
+			case "player.quit":
+				if(isset($this->dEData[$data->CID])){unset($this->dEData[$data->CID]);}
 				break;
 		}
 	}
@@ -346,85 +374,45 @@ class PMEssCore implements Plugin{
 				{
 					return("You are not OP/Admin, so you can not disguise! Lololol! -- by Kevin. ");
 				}
-				switch(count($arg))
-				{
-					case 0:
-						return "========\nDisguise\n========\n* p - Disguise as a player. \n* m - Disguise as a mob. \nOnly give '/d TYPE' to undisguise. ";
-						break;
-					case 1:
-						switch(strtolower($arg[0]))
+				if(count($arg) == 0){
+					return "========\nDisguise\n========\n* p - Disguise as a player. \n* m - Disguise as a mob. \n* e - Disguise as an entity. \nType '/ud' to undisguise. ";
+				}
+				switch($arg[0]){
+					case "p":
+						if(count($arg) != 2){
+							return("Usage: \n/d p [Username]");
+						}
+						if($this->api->session->sessions[$issuer->CID]["dMState"] == true or $this->api->session->sessions[$issuer->CID]["dEState"] == true)
 						{
-							case "p":
-								if($this->api->session->sessions[$issuer->CID]["dMState"] == true)
+							return("Please undisguise first. ");
+						}
+						if($this->api->session->sessions[$issuer->CID]["dPState"] == false)
+						{
+							if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.player") == false){
+								return("You are not allowed to \n disguise as a player. ");
+							}
+							$issuer->sendChat("Setting user data...");
+							$this->api->session->sessions[$issuer->CID]["dPUsername"] = $arg[1];
+							$this->api->session->sessions[$issuer->CID]["dPState"] = true;
+							$issuer->sendChat("Recreating entity...\n");
+							foreach($issuer->level->players as $p)
+							{
+								if(strtolower($p->eid) != strtolower($issuer->eid))
 								{
-									return("Please undisguise first. ");
+									$this->recreateDPEntity($p, $issuer);
 								}
-								if($this->api->session->sessions[$issuer->CID]["dPState"] == true)
-								{
-									$this->api->session->sessions[$issuer->CID]["dPState"] = false;
-									$issuer->sendChat("Recreating entity...");
-									foreach($issuer->level->players as $p)
-									{
-										if(strtolower($p->eid) != strtolower($issuer->eid))
-										{
-											$this->recreateEntity($p, $issuer);
-										}
-									}
-									$issuer->sendChat("You seccussfully undisguised. ");
-								}else{
-									return("[Kevin's Disguise Manager]\nYou are not disguised as a player. To distuise as a player, please use: \nd p (Username)");
-								}
-								break;
-							case "m":
-								if($this->api->session->sessions[$issuer->CID]["dMState"] == true)
-								{
-									//Undisguise as a mob
-									$issuer->sendChat("Recreating entity...");
-									foreach($issuer->level->players as $p)
-									{
-										if(strtolower($p->eid) != strtolower($issuer->eid))
-										{
-											$this->recreateEntity($p, $issuer);
-										}
-									}
-									$this->api->session->sessions[$issuer->CID]["dMState"] = false;
-									return("You successfully undisguised as a mob. ");
-								}else{
-									if($this->api->session->sessions[$issuer->CID]["dPState"] == true)
-									{
-										return("Error: You can not disguise as a mob when you disguised as a player!");
-									}else{
-										return("You may disguise as: \nchicken, cow, sheep, zombie, creeper, \nskeleton, spider, pigzombie. ");
-									}
-								}
+							}
+							$issuer->sendChat("You are now " . $arg[1] . " , \nbut your permission won't change. ", "", true);
 						}
 						break;
-					case 2:
-						switch(strtolower($arg[0]))
+					case "m":
+						if(count($arg) != 2){
+							return("Usage: \n/d m [Type]\nTypes: sheep,cow,pig,chicken,zombie,skeleton,creeper,pigzombie,spider");
+						}
+						if($this->api->session->sessions[$issuer->CID]["dPState"] == true or $this->api->session->sessions[$issuer->CID]["dMState"] == true)
 						{
-							case "p":
-								if($this->api->session->sessions[$issuer->CID]["dPState"] == false)
-								{
-									if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.player")==false){
-										return("You are not allowed to \n disguise as a player. ");
-									}
-									$issuer->sendChat("Setting user data...");
-									$this->api->session->sessions[$issuer->CID]["dPUsername"] = $arg[1];
-									$this->api->session->sessions[$issuer->CID]["dPState"] = true;
-									$issuer->sendChat("Recreating entity...\n");
-									foreach($issuer->level->players as $p)
-									{
-										if(strtolower($p->eid) != strtolower($issuer->eid))
-										{
-											$this->recreateDPEntity($p, $issuer);
-										}
-									}
-									$issuer->sendChat("You are now " . $arg[1] . " , \nbut your permission won't change. ", "", true);
-								}else{
-									return("You are already disguised. \nType /ud to undisguise. ");
-								}
-								break;
-							case "m":
+							return("Please undisguise first. ");
+						}
 /*
 0x0a Chicken (Animal)
 0x0b Cow (Animal)
@@ -437,101 +425,149 @@ class PMEssCore implements Plugin{
 0x23 Spider (Monster)
 0x24 PigZombie (Zombie)
 */
-								$mobdata = 0x00;
-								switch(strtolower($arg[1]))
-								{
-									case "chicken":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.chicken")==false){
-											return("You are not allowed to disguise \nas a chicken. ");
-										}
-										$mobdata = 0x0a;
-										break;
-									case "cow":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.cow")==false){
-											return("You are not allowed to disguise \nas a cow. ");
-										}
-										$mobdata = 0x0b;
-										break;
-									case "pig":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.pig")==false){
-											return("You are not allowed to disguise \nas a pig. ");
-										}
-										$mobdata = 0x0c;
-										break;
-									case "sheep":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.sheep")==false){
-											return("You are not allowed to disguise \nas a sheep. ");
-										}
-										$mobdata = 0x0d;
-										break;
-									case "zombie":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.zombie")==false){
-											return("You are not allowed to disguise \nas a zombie. ");
-										}
-										$mobdata = 0x20;
-										break;
-									case "creeper":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.creeper")==false){
-											return("You are not allowed to disguise \nas a creeper. ");
-										}
-										$mobdata = 0x21;
-										break;
-									case "skeleton":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.skeleton")==false){
-											return("You are not allowed to disguise \nas a skeleton. ");
-										}
-										$mobdata = 0x22;
-										break;
-									case "spider":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.spider")==false){
-											return("You are not allowed to disguise \nas a spider. ");
-										}
-										$mobdata = 0x23;
-										break;
-									case "pigzombie":
-										if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.pigzombie")==false){
-											return("You are not allowed to disguise \nas a pig zombie
-											. ");
-										}
-										$mobdata = 0x24;
-										break;
-									default:
-										return("Error: Wrong mob type. ");
+						$mobdata = 0x00;
+						switch(strtolower($arg[1])){
+							case "chicken":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.chicken")==false){
+									return("You are not allowed to disguise \nas a chicken. ");
 								}
+								$mobdata = 0x0a;
+								break;
+							case "cow":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.cow")==false){
+									return("You are not allowed to disguise \nas a cow. ");
+								}
+								$mobdata = 0x0b;
+								break;
+							case "pig":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.pig")==false){
+									return("You are not allowed to disguise \nas a pig. ");
+								}
+								$mobdata = 0x0c;
+								break;
+							case "sheep":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.sheep")==false){
+									return("You are not allowed to disguise \nas a sheep. ");
+								}
+								$mobdata = 0x0d;
+								break;
+							case "zombie":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.zombie")==false){
+									return("You are not allowed to disguise \nas a zombie. ");
+								}
+								$mobdata = 0x20;
+								break;
+							case "creeper":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.creeper")==false){
+									return("You are not allowed to disguise \nas a creeper. ");
+								}
+								$mobdata = 0x21;
+								break;
+							case "skeleton":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.skeleton")==false){
+									return("You are not allowed to disguise \nas a skeleton. ");
+								}
+								$mobdata = 0x22;
+								break;
+							case "spider":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.spider")==false){
+									return("You are not allowed to disguise \nas a spider. ");
+								}
+								$mobdata = 0x23;
+								break;
+							case "pigzombie":
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.all")==false and $this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.mob.pigzombie")==false){
+									return("You are not allowed to disguise \nas a pig zombie
+									. ");
+								}
+								$mobdata = 0x24;
+								break;
+							default:
+								return("Error: Wrong mob type. ");
+						}
+						foreach($issuer->level->players as $p)
+						{
+							if(strtolower($p->eid) != strtolower($issuer->eid))
+							{
+								$this->recreateEntityToMob($p, $mobdata, $issuer);
+							}
+						}
+						$issuer->sendChat("You are now a " . $arg[1] . ". \nTo undisguise as a mob, type:\n* /d m");
+						$this->api->session->sessions[$issuer->CID]["dMData"] = $mobdata;
+						$this->api->session->sessions[$issuer->CID]["dMState"] = true;
+						break;
+					case "e":
+						if(count($arg) != 2 and count($arg) != 3){
+							return("Usage: \n* ptnt - Primed TNT\n* block [ID] - A block");
+						}
+						switch(strtolower($arg[1])){
+							case "ptnt":
+								if($this->api->session->sessions[$issuer->CID]["dMState"] or $this->api->session->sessions[$issuer->CID]["dPState"] or ($this->api->session->sessions[$issuer->CID]["dEState"] and $this->api->session->sessions[$issuer->CID]["dEType"] == 2)){
+									return("Please undisguise first. ");
+								}
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.primedtnt") == false){
+									return("You are not allowed to \n disguise as a Primed TNT. ");
+								}
+								$this->api->session->sessions[$issuer->CID]["dEState"] = true;
+								$this->api->session->sessions[$issuer->CID]["dMType"] = 1;
 								foreach($issuer->level->players as $p)
 								{
 									if(strtolower($p->eid) != strtolower($issuer->eid))
 									{
-										$this->recreateEntityToMob($p, $mobdata, $issuer);
+										$this->recreatePTNTEntity($p, $issuer);
 									}
 								}
-								$issuer->sendChat("You are now a " . $arg[1] . ". \nTo undisguise as a mob, type:\n* /d m");
-								$this->api->session->sessions[$issuer->CID]["dMData"] = $mobdata;
-								$this->api->session->sessions[$issuer->CID]["dMState"] = true;
+								$this->dEData[$issuer->CID] = $issuer;
+								$issuer->sendChat("You are now disguised as a primed TNT. ");
+								break;
+							case "block":
+								if(count($arg) != 3){
+									return("Usage: \n/d e block [ID]");
+								}
+								if($this->api->session->sessions[$issuer->CID]["dMState"] or $this->api->session->sessions[$issuer->CID]["dPState"] or ($this->api->session->sessions[$issuer->CID]["dEState"] and $this->api->session->sessions[$issuer->CID]["dEType"] == 1)){
+									return("Please undisguise first. ");
+								}
+								if($this->api->perm->checkPerm($issuer->iusername, "pmess.disguisecraft.block") == false){
+									return("You are not allowed to \n disguise as a Moveable Block. ");
+								}
+								$this->api->session->sessions[$issuer->CID]["dEState"] = true;
+								$this->api->session->sessions[$issuer->CID]["dEType"] = 2;
+								$this->api->session->sessions[$issuer->CID]["dEBlockID"] = (int) $arg[2];
+								foreach($issuer->level->players as $p)
+								{
+									if(strtolower($p->eid) != strtolower($issuer->eid))
+									{
+										$this->recreateBlockEntity($p, $issuer, (int) $arg[2]);
+									}
+								}
+								$this->dEData[$issuer->CID] = $issuer;
+								$issuer->sendChat("You are now disguised as a block. ");
+								break;
 						}
 						break;
 				}
 				break;
 			case "undisguise":
-				if($this->api->session->sessions[$issuer->CID]["dPState"] == true or $this->api->session->sessions[$issuer->CID]["dMState"] == true)
-				{
-				}else{
+				if($this->api->session->sessions[$issuer->CID]["dPState"] == false and $this->api->session->sessions[$issuer->CID]["dMState"] == false and $this->api->session->sessions[$issuer->CID]["dEState"] == false){
 					return("You are not disguised! ");
 				}
 				$issuer->sendChat("Setting user data...");
-				if($this->api->session->sessions[$issuer->CID]["dPState"] == true)
-				{
+				if($this->api->session->sessions[$issuer->CID]["dPState"] == true){
 					$this->api->session->sessions[$issuer->CID]["dPState"] = false;
 					$this->api->session->sessions[$issuer->CID]["dPUsername"] = "";
 				}
-				if($this->api->session->sessions[$issuer->CID]["dMState"] == true)
-				{
+				if($this->api->session->sessions[$issuer->CID]["dMState"] == true){
 					$this->api->session->sessions[$issuer->CID]["dMState"] = false;
 					$this->api->session->sessions[$issuer->CID]["dMData"] = 0x00;
 				}
+				if($this->api->session->sessions[$issuer->CID]["dEState"] == true){
+					if(isset($this->dEData[$issuer->CID])){unset($this->dEData[$issuer->CID]);}
+					$this->api->session->sessions[$issuer->CID]["dEState"] = false;
+					$this->api->session->sessions[$issuer->CID]["dEType"] = 0;
+					$this->api->session->sessions[$issuer->CID]["dEBlockID"] = -1;
+				}
 				$issuer->sendChat("Recreating entity...");
-				foreach($issuer->level->players as $p)
-				{
+				foreach($issuer->level->players as $p){
 					if(strtolower($p->eid) != strtolower($issuer->eid))
 					{
 						$this->recreateEntity($p, $issuer);
@@ -601,7 +637,7 @@ class PMEssCore implements Plugin{
 		));
 		$p->dataPacket(MC_ADD_PLAYER, array(
 			"clientID" => 0,
-			"username" => $this->api->session->session[$issuer->CID]["dPUsername"],
+			"username" => $this->api->session->sessions[$issuer->CID]["dPUsername"],
 			"eid" => $issuer->eid,
 			"x" => $issuer->entity->x,
 			"y" => $issuer->entity->y,
@@ -611,6 +647,48 @@ class PMEssCore implements Plugin{
 			"unknown1" => 0,
 			"unknown2" => 0,
 			"metadata" => $issuer->entity->getMetadata()));
+	}
+	
+	public function recreatePTNTEntity($p, $issuer)
+	{
+		$p->dataPacket(MC_REMOVE_ENEITY, array(
+			"eid" => $issuer->eid
+		));
+		$p->dataPacket(MC_ADD_ENTITY, array(
+			"eid" => $issuer->eid,
+			"type" => OBJECT_PRIMEDTNT,
+			"x" => $issuer->entity->x,
+			"y" => $issuer->entity->y,
+			"z" => $issuer->entity->z,
+			"did" => 0,
+		));
+		$p->dataPacket(MC_SET_ENTITY_MOTION, array(
+			"eid" => $issuer->eid,
+			"speedX" => 0,
+			"speedY" => 0,
+			"speedZ" => 0
+		));
+	}
+	
+	public function recreateBlockEntity($p, $issuer, $blockID = 1)
+	{
+		$p->dataPacket(MC_REMOVE_ENEITY, array(
+			"eid" => $issuer->eid
+		));
+		$p->dataPacket(MC_ADD_ENTITY, array(
+			"eid" => $issuer->eid,
+			"type" => FALLING_SAND,
+			"x" => $issuer->entity->x,
+			"y" => $issuer->entity->y,
+			"z" => $issuer->entity->z,
+			"did" => -$blockID,
+		));
+		$p->dataPacket(MC_SET_ENTITY_MOTION, array(
+			"eid" => $issuer->eid,
+			"speedX" => 0,
+			"speedY" => 0,
+			"speedZ" => 0
+		));
 	}
 	
 	public function recreateEntityToMob($p, $mobid, $issuer)

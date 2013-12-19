@@ -2,7 +2,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-iControlU
-version=3.5.7-Alpha
+version=3.6.0-Beta
 author=Kevin Wang
 class=PMEssICU
 apiversion=11
@@ -78,7 +78,7 @@ class PMEssICU implements Plugin{
 				if(strtolower($player->iusername) == strtolower($issuer->iusername)){
 					return("You can not control yourself. ");
 				}
-				if($player->checkPerm("pmess.icu.uncontrollable")){
+				if($this->api->perm->checkPerm($player->iusername, "pmess.icu.uncontrollable")){
 					return("Target player has this PermissionNode: \npmess.icu.uncontrollable\nSo you can not control him/her. ");
 				}
 				/* =====Init the control process===== */
