@@ -4,7 +4,7 @@
 __PocketMine Plugin__
 name=PMEssentials-Redstone
 description=Redstone System
-version=3.6.0-Beta
+version=3.6.1-Beta
 author=Kevin Wang
 class=PMEssRedstone
 apiversion=11
@@ -145,12 +145,7 @@ class PMEssRedstone implements Plugin{
 								$blockunder =$block->getSide(0);
  								if(!empty($text) && ($text[0] === '/')){
 									$text =str_replace("issuer", $this->player->iusername, $text);
-									$args = explode(" ", substr($text, 1));
-									if($this->server->api->dhandle("pmess.groupmanager.checkperm", array("Username"=>$this->player->iusername, "Command" => strtolower($args[0])))==true){
-										$this->api->console->run(substr($text, 1), $this->player);
-									}else{
-										$this->player->sendChat("You are not allowed to use that command. \n");
-									}
+									$this->api->console->run(substr($text, 1), $this->player);
  								}elseif($blockunder->getID() === 0){
 									$this->api->tile->remove($sign->id);
 									$this->player->level->setBlock($block, new airBlock(), false);

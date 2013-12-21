@@ -10,6 +10,27 @@ No comercial use of this software.
 If you disobey the rules above, you may recieve a law suit. 
 
 Change Log: 
+  - 3.6.1 Beta ( 2013/12/21 )
+      - Added BlockDisguise permissions for each block ID
+        ("pmess.disguisecraft.block" for all blocks)
+        ("pmess.disguisecraft.block.[ID]" for only a specfied block)
+        (For example, "pmess.disguisecraft.block.20" is only for glass block)
+      - Added(Fixed) Signs and Bucket protection for Area Protect Module
+      - Fixed the Redstone Command Sign permission detection bug
+  - 3.6.0 Beta ( 2013/12/19 )
+      - Fixed the iControlU bug
+      - Added Disguise as a Primed TNT
+      - Added Disguise as a Moveable Block
+      - Rewrote the DisguiseCraft code structure
+  - 3.5.7 Alpha ( 2013/12/18 )
+      - Fixed Portal to World errors and bugs. 
+      - Fixed the Undefined variable "isVanished" error bug randomly. 
+  - 3.5.6 Alpha ( 2013/12/18 )
+      - Added Colorful Chat support. 
+        ( Use $X, which X is color code, the same as PC color code. )
+        ( Currently only work on console.  )
+      - Fixed username bug when disguising as a player
+      - Fixed loading external plugins depends on PMEss
   - 3.5.5 Alpha ( 2013/12/17 )
       - Supported PocketMine-MP Alpha_1.3.11dev ( MCPE 0.8.0 )
         - Added PowerTool ( /pt ), touch a block by holding a specified item to run a command. 

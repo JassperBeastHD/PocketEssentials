@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Protect
-version=3.6.0-Beta
+version=3.6.1-Beta
 author=Kevin Wang
 class=PMEssProtect
 apiversion=11
@@ -28,7 +28,16 @@ class PMEssProtect implements Plugin{
 private $api, $config, $path, $pos1, $pos2, $level;public function __construct(ServerAPI $api, $server =false){
 $this->api =$api; $this->pos1 =array(); $this->pos2 =array(); $this->level =array();
 }
-public function init() {$this->createConfig(); $this->api->console->register("unprotect", "Unprotects your private area.", array($this, "commandH"));$this->api->console->register("selworld", "Select whole world to protect.", array($this, "commandH")); $this->api->console->register("protect", "Protects the area for you.", array($this, "commandH")); $this->api->addHandler("player.block.break", array($this, "handle"), 7); $this->api->addHandler("player.block.place", array($this, "handle"), 7); $this->api->console->alias("protect1", "protect pos1"); $this->api->console->alias("protect2", "protect pos2");
+public function init() {
+	$this->createConfig(); 
+	$this->api->console->register("unprotect", "Unprotects your private area.", array($this, "commandH"));
+	$this->api->console->register("selworld", "Select whole world to protect.", array($this, "commandH")); 
+	$this->api->console->register("protect", "Protects the area for you.", array($this, "commandH")); 
+	$this->api->addHandler("player.block.touch", array($this, "handle"), 7); 
+	$this->api->addHandler("player.block.place", array($this, "handle"), 7); 
+	$this->api->addHandler("player.block.break", array($this, "handle"), 7); 
+	$this->api->console->alias("protect1", "protect pos1"); 
+	$this->api->console->alias("protect2", "protect pos2");
 }
 public function __destruct(){
 }
@@ -101,27 +110,71 @@ $this->config[$user][$world]['protect'] =false; $this->writeConfig($this->config
 return $output;
 }
 public function handle($data, $event){
-switch ($event) {case 'player.block.break': $block =$data['target']; if ($block->getID() == 63 || $block->getID() == 68) {break;
-}
-foreach ($this->config as $name => $w) {foreach ($w as $wld => $config) {if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {continue;
-}
-$x =$block->x; $y =$block->y; $z =$block->z; if ($config['min'][0] <= $x && $x <= $config['max'][0]) {if ($config['min'][1] <= $y && $y <= $config['max'][1]) {if ($config['min'][2] <= $z && $z <= $config['max'][2]) {$data['player']->sendChat("This is ".$name."'s private area."); return false;
-}
-}
-}
-}
-}
-break; case 'player.block.place': if ($data['item']->getID() == 323) {break;
-}
-$block =$data['block']; foreach ($this->config as $name => $w) {foreach ($w as $wld => $config) {if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {continue;
-}
-$x =$block->x; $y =$block->y; $z =$block->z; if ($config['min'][0] <= $x && $x <= $config['max'][0]) {if ($config['min'][1] <= $y && $y <= $config['max'][1]) {if ($config['min'][2] <= $z && $z <= $config['max'][2]) {$data['player']->sendChat("This is ".$name."'s private area."); return false;
-}
-}
-}
-}
-}
-break;
+switch ($event) {
+	case "player.block.touch":
+		foreach ($this->config as $name => $w) {
+			foreach ($w as $wld => $config) {
+				if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {
+					continue;
+				}
+				$x =$block->x; 
+				$y =$block->y; 
+				$z =$block->z; 
+				if($config['min'][0] <= $x && $x <= $config['max'][0]) {
+					if ($config['min'][1] <= $y && $y <= $config['max'][1]) {
+						if ($config['min'][2] <= $z && $z <= $config['max'][2]) {
+								$data['player']->sendChat("This is ".$name."'s private area."); 
+							return false;
+						}
+					}
+				}
+			}
+		}
+		break; 
+	case 'player.block.break': 
+		$block =$data['target']; 
+		if ($block->getID() == 63 || $block->getID() == 68) {break;}
+		foreach ($this->config as $name => $w) {
+			foreach ($w as $wld => $config) {
+				if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {
+					continue;
+				}
+				$x =$block->x; 
+				$y =$block->y; 
+				$z =$block->z; 
+				if ($config['min'][0] <= $x && $x <= $config['max'][0]) {
+					if ($config['min'][1] <= $y && $y <= $config['max'][1]) {
+						if ($config['min'][2] <= $z && $z <= $config['max'][2]) {
+							$data['player']->sendChat("This is ".$name."'s private area."); 
+							return false;
+						}
+					}
+				}
+			}
+		}
+		break; 
+	case 'player.block.place': 
+		if ($data['item']->getID() == 323) {break;}
+		$block =$data['block']; 
+		foreach ($this->config as $name => $w) {
+			foreach ($w as $wld => $config) {
+				if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {
+					continue;
+				}
+				$x =$block->x; 
+				$y =$block->y; 
+				$z =$block->z; 
+				if ($config['min'][0] <= $x && $x <= $config['max'][0]) {
+					if ($config['min'][1] <= $y && $y <= $config['max'][1]) {
+						if ($config['min'][2] <= $z && $z <= $config['max'][2]) {
+							$data['player']->sendChat("This is ".$name."'s private area."); 
+							return false;
+						}
+					}
+				}
+			}
+		}
+		break;
 }
 }
 public function getAreas($user, &$output) {$cnt =(int) 0; $worlds =""; foreach ($this->config[$user] as $wld => $array) {if ($array['protect']) {$cnt++; $worlds .= $wld."  ";

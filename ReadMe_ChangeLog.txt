@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.6.0-Beta
+                                     Package Version: 3.6.1-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,7 +12,14 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
-  - 3.6.0 Alpha ( 2013/12/19 )
+  - 3.6.1 Beta ( 2013/12/21 )
+      - Added BlockDisguise permissions for each block ID
+        ("pmess.disguisecraft.block" for all blocks)
+        ("pmess.disguisecraft.block.[ID]" for only a specfied block)
+        (For example, "pmess.disguisecraft.block.20" is only for glass block)
+      - Added(Fixed) Signs and Bucket protection for Area Protect Module
+      - Fixed the Redstone Command Sign permission detection bug
+  - 3.6.0 Beta ( 2013/12/19 )
       - Fixed the iControlU bug
       - Added Disguise as a Primed TNT
       - Added Disguise as a Moveable Block

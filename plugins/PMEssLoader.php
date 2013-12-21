@@ -3,7 +3,7 @@
 __PocketMine Plugin__
 name=PMEssentials-RootLoader
 description=Load PocketEssentials Modules in Correct Order
-version=3.6.0-Beta
+version=3.6.1-Beta
 author=Kevin Wang
 class=PMEssRootLoader
 apiversion=11
