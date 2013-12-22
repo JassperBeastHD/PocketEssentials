@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.6.1-Beta
+                                     Package Version: 3.6.3-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com

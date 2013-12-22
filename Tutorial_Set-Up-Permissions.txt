@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.6.1-Beta
+                                     Package Version: 3.6.3-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -23,6 +23,9 @@ Config Samples(You can use them directly or customize them):
 3: For Developers, please read ReadMe_ForDevelopers.txt
 
 *****[Built-In Permission Nodes]*****
+
+Core: 
+  1: pmess.vanish.use = Allow to vanish. ( Also need to add "&.v" permission node)
 
 Mute: 
   1: pmess.mute.nomuting = Player can not be muted. 
@@ -50,3 +53,6 @@ DisguiseCraft:
   9: pmess.disguisecraft.mob.skeleton = Players can disguise as a skeleton. '
   10: pmess.disguisecraft.mob.spider = Players can disguise as a spider. 
   11: pmess.disguisecraft.mob.pigzombie = Players can disguise as a pig zombie. 
+  12: pmess.disguisecraft.ptnt = Players can disguise as a Primed TNT. 
+  13: pmess.disguisecraft.block = Players can disguise as all blocks. 
+  14: pmess.disguisecraft.block.[ID] = Players can disguise as the block that ID is specfied. 

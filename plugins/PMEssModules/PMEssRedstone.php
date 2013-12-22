@@ -4,7 +4,7 @@
 __PocketMine Plugin__
 name=PMEssentials-Redstone
 description=Redstone System
-version=3.6.1-Beta
+version=3.6.3-Beta
 author=Kevin Wang
 class=PMEssRedstone
 apiversion=11

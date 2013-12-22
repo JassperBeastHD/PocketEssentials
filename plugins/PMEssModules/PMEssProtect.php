@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Protect
-version=3.6.1-Beta
+version=3.6.3-Beta
 author=Kevin Wang
 class=PMEssProtect
 apiversion=11
@@ -112,6 +112,7 @@ return $output;
 public function handle($data, $event){
 switch ($event) {
 	case "player.block.touch":
+		$block = $data["target"];
 		foreach ($this->config as $name => $w) {
 			foreach ($w as $wld => $config) {
 				if (!$config['protect'] || $name == $data['player']->username || $data['player']->level->getName() !== $wld) {

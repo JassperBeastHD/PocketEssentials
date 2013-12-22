@@ -2,7 +2,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-ChatDisable
-version=3.6.1-Beta
+version=3.6.3-Beta
 author=Kevin Wang
 class=PMEssDisableChat
 apiversion=11
@@ -41,11 +41,11 @@ class PMEssDisableChat implements Plugin{
 		switch(strtolower($cmd)){
 			case "chat-on":
 				$issuer->disableChat = false;
-				$issuer->sendChat("All chat message disabled, \ninclude private messages. ", "", true);
+				$issuer->sendChat("All chat message enabled again. ");
 				break;
 			case "chat-off":
 				$issuer->disableChat = true;
-				$issuer->sendChat("All chat message enabled again. ");
+				$issuer->sendChat("All chat message disabled, \ninclude private messages. ", "", true);
 				break;
 		}
 	}

@@ -2,7 +2,7 @@
                                      PocketMine Essentials Package
                                                 by Kevin Wang
 ----------------------------------------------------------------------------------------------
-                                     Package Version: 3.6.1-Beta
+                                     Package Version: 3.6.3-Beta
 ----------------------------------------------------------------------------------------------
 Skype: kvwang98 ( The one without _rec after the username )
 E-Mail: kevin@cnkvha.com
@@ -12,6 +12,16 @@ E-Mail: kevin@cnkvha.com
 ==============================================================================================
 
 What's New: 
+  - 3.6.3 Beta ( 2013/12/22 )
+      - Added World Spawn Changer ( /setwspawn ), suggested by iksasu on Github(issue 1)
+      - Fixed the bugs(Github issue 3 and 5) reported by iksasu. 
+      - Fixed God Mode doesn't work. (Github issue 6)
+  - 3.6.2 Beta ( 2013/12/22 )
+      - Fixed lots of DisguiseCraft bugs. 
+        (You won't lose your disguise when vanish/unvanish)
+        (You won't lose your disguise when teleport to another world)
+      - Fixed some errors
+        (Removed case-insensitivity in Session API)
   - 3.6.1 Beta ( 2013/12/21 )
       - Added BlockDisguise permissions for each block ID
         ("pmess.disguisecraft.block" for all blocks)

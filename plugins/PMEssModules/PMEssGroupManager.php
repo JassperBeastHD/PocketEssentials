@@ -5,7 +5,7 @@
 __PocketMine Plugin__
 name=PMEss-GroupManager
 description=PocketEssentials GroupManager
-version=3.6.1-Beta
+version=3.6.3-Beta
 author=Kevin Wang
 class=PMEssGM
 apiversion=11
@@ -50,7 +50,7 @@ GroupName.YML{
 class PMEssGM implements Plugin{
 	private $api;
 	
-	private $defaultPerms = array("&.login", "&.register", "&.unregister", "&.tell", "&.tpa", "&.tpaccept", "&.tpdeny", "&.home", "&.sethome", "&.lock", "&.unlock");
+	private $defaultPerms = array("&.login", "&.register", "&.unregister", "&.tell", "&.tpa", "&.tpaccept", "&.tpdeny", "&.home", "&.sethome", "&.lock", "&.unlock", "&.chat-on", "&.chat-off");
 	
 	public $userDir;
 	public $groupDir;

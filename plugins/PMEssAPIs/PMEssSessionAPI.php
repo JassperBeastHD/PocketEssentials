@@ -23,11 +23,9 @@ class PMEssSessionAPI{
 	}
 	
 	public function setDefaultData($key, $value){
-		$key = strtolower($key);
 		$this->defaultData[$key] = $value;
 	}
 	public function getDefaultData($key, $value){
-		$key = strtolower($key);
 		if(isset($this->defaultData[$key])){
 			return($this->defaultData[$key]);
 		}else{
@@ -56,7 +54,6 @@ class PMEssSessionAPI{
 	}
 	
 	public function setData($cid, $key, $value){
-		$key = strtolower($key);
 		if(!(isset($this->sessions[$cid]))){return(false);}
 		$session = $this->sessions[$cid];
 		if(isset($session[$key])){
@@ -69,7 +66,7 @@ class PMEssSessionAPI{
 	}
 	
 	public function getData($cid, $key){
-		$key = strtolower($key);
+		$key = $key;
 		if(!(isset($this->sessions[$cid]))){return(null);}
 		$session = $this->sessions[$cid];
 		if(!(isset($session[$key]))){return(null);}

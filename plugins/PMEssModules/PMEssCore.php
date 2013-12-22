@@ -3,7 +3,7 @@
 /*
 __PocketMine Plugin__
 name=PMEssentials-Core
-version=3.6.1-Beta
+version=3.6.3-Beta
 author=Kevin Wang
 class=PMEssCore
 apiversion=11
@@ -50,6 +50,7 @@ class PMEssCore implements Plugin{
 		$this->api->session->setDefaultData("superIS", "none"); 
 
 		$this->api->session->setDefaultData("isVanished", false); 
+		$this->api->session->setDefaultData("chkedDisguise", false); 
 		
 		$this->api->session->setDefaultData("enabledGodMode", false); 
 		
@@ -64,9 +65,11 @@ class PMEssCore implements Plugin{
 		$this->api->schedule(1, array($this, "timerMoveEntity"), array(), true);
 		
 		$this->api->addHandler("player.chat", array($this, "handleEvent"), 1);
+		$this->api->addHandler("player.move", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.quit", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.interact", array($this, "handleEvent"), 1);
 		$this->api->addHandler("player.teleport.level", array($this, "handleEvent"), 1);
+		$this->api->addHandler("entity.health.change", array($this, "handleEvent"), 1);
 		
 		$this->api->console->register("broadcast", "Broadcast a message to all players online. ", array($this, "handleCommand"));
 		$this->api->console->register("supersword", "Magic Sword, aliased as /ssw . ", array($this, "handleCommand"));
@@ -108,6 +111,60 @@ class PMEssCore implements Plugin{
 	
 	public function handleEvent(&$data, $event){
 		switch($event){
+			case "player.move":
+				if($this->api->session->sessions[$data->player->CID]["chkedDisguise"] == false){
+					foreach($data->level->players as $p){
+						if($data->player->CID == $p->CID){continue;}
+						if($this->api->session->sessions[$p->CID]["isVanished"]){
+							$data->player->dataPacket(MC_REMOVE_ENTITY, array(
+								"eid" => $p->entity->eid
+								));
+						}elseif($this->api->session->sessions[$p->CID]["dPState"]){
+							$this->recreateDPEntity($data->player, $p);
+						}elseif($this->api->session->sessions[$p->CID]["dMState"]){
+							$this->recreateEntityToMob($data->player, $this->api->session->sessions[$p->CID]["dMData"], $p);
+						}elseif($this->api->session->sessions[$p->CID]["dEState"]){
+							if($this->api->session->sessions[$p->CID]["dEType"] == 1){
+								$this->recreatePTNTEntity($data->player, $p);
+							}elseif($this->api->session->sessions[$p->CID]["dEType"] == 2){
+								$this->recreateBlockEntity($data->player, $p, $this->api->session->sessions[$p->CID]["dEBlockID"]);
+							}
+						}
+					}
+					if($this->api->session->sessions[$data->player->CID]["isVanished"] == true){
+						foreach($data->level->players as $p){
+							if($data->player->CID == $p->CID){continue;}
+							$p->dataPacket(MC_REMOVE_ENTITY, array(
+								"eid" => $data->eid
+								));
+						}
+					}elseif($this->api->session->sessions[$data->player->CID]["dPState"] == true){
+						foreach($data->level->players as $p){
+							if($data->player->CID == $p->CID){continue;}
+							$this->recreateDPEntity($p, $data->player);
+						}
+					}elseif($this->api->session->sessions[$data->player->CID]["dMState"]){
+						foreach($data->level->players as $p){
+							if($data->player->CID == $p->CID){continue;}
+							$this->recreateEntityToMob($p, $this->api->session->sessions[$data->player->CID]["dMData"], $data->player);
+						}
+					}elseif($this->api->session->sessions[$data->player->CID]["dEState"]){
+						if($this->api->session->sessions[$data->player->CID]["dEType"] == 1){
+							foreach($data->level->players as $p){
+								if($data->player->CID == $p->CID){continue;}
+								$this->recreatePTNTEntity($p, $data->player);
+							}
+						}elseif($this->api->session->sessions[$data->player->CID]["dEType"] == 2){
+							foreach($data->level->players as $p){
+								if($data->player->CID == $p->CID){continue;}
+								$this->recreateBlockEntity($p, $data->player, $this->api->session->sessions[$data->player->CID]["dEBlockID"]);
+							}
+						}
+					}
+					$this->api->session->sessions[$data->player->CID]["chkedDisguise"] = true;
+				}
+				return;
+				break;
 			case "player.chat":
 				if($this->api->session->getData($data["player"]->CID, "icu_underCtl") == true or $this->api->perm->checkMuteStatus($data["player"]->iusername) == true){return(false);}
 				if($this->api->dhandle("pmess.groupmanager.getstate", array()) == false){
@@ -140,14 +197,19 @@ class PMEssCore implements Plugin{
 				}
 				break;
 			case "player.teleport.level":
-				if(isset($this->api->session->sessions[$data["player"]->CID]["isVanished"]) and $this->api->session->sessions[$data["player"]->CID]["isVanished"]){
-					$this->api->session->sessions[$data["player"]->CID]["isVanished"] = false;
-					$data["player"]->sendChat("You are UN-Vanished due \nto world change! ");
-				}
-				return(null);
+				$this->api->session->sessions[$data["player"]->CID]["chkedDisguise"] = false;
+				return;
 				break;
 			case "player.quit":
 				if(isset($this->dEData[$data->CID])){unset($this->dEData[$data->CID]);}
+				break;
+			case "entity.health.change":
+				if(!($data["entity"]->player instanceof Player)){return;}
+				if($this->api->session->sessions[$data["entity"]->player->CID]["enabledGodMode"]){
+					return(false);
+				}else{
+					return;
+				}
 				break;
 		}
 	}
@@ -259,7 +321,7 @@ class PMEssCore implements Plugin{
 					console("Please run this command in-game.\n");
 					break;
 				}
-				if($this->api->ban->isOp($issuer->iusername) == true)
+				if($this->api->perm->checkPerm($issuer->iusername, "pmess.vanish.use") == true)
 				{
 					$this->api->pmess->switchVanish($issuer);
 				}else{
@@ -613,7 +675,7 @@ class PMEssCore implements Plugin{
 
 	public function recreateEntity($p, $issuer)
 	{
-		$p->dataPacket(MC_REMOVE_ENEITY, array(
+		$p->dataPacket(MC_REMOVE_ENTITY, array(
 			"eid" => $issuer->eid
 		));
 		$p->dataPacket(MC_ADD_PLAYER, array(
@@ -632,7 +694,7 @@ class PMEssCore implements Plugin{
 	
 	public function recreateDPEntity($p, $issuer)
 	{
-		$p->dataPacket(MC_REMOVE_ENEITY, array(
+		$p->dataPacket(MC_REMOVE_ENTITY, array(
 			"eid" => $issuer->eid
 		));
 		$p->dataPacket(MC_ADD_PLAYER, array(
@@ -651,7 +713,7 @@ class PMEssCore implements Plugin{
 	
 	public function recreatePTNTEntity($p, $issuer)
 	{
-		$p->dataPacket(MC_REMOVE_ENEITY, array(
+		$p->dataPacket(MC_REMOVE_ENTITY, array(
 			"eid" => $issuer->eid
 		));
 		$p->dataPacket(MC_ADD_ENTITY, array(
@@ -672,7 +734,7 @@ class PMEssCore implements Plugin{
 	
 	public function recreateBlockEntity($p, $issuer, $blockID = 1)
 	{
-		$p->dataPacket(MC_REMOVE_ENEITY, array(
+		$p->dataPacket(MC_REMOVE_ENTITY, array(
 			"eid" => $issuer->eid
 		));
 		$p->dataPacket(MC_ADD_ENTITY, array(
@@ -693,7 +755,7 @@ class PMEssCore implements Plugin{
 	
 	public function recreateEntityToMob($p, $mobid, $issuer)
 	{
-		$p->dataPacket(MC_REMOVE_ENEITY, array(
+		$p->dataPacket(MC_REMOVE_ENTITY, array(
 			"eid" => $issuer->eid
 		));
 		
@@ -701,7 +763,7 @@ class PMEssCore implements Plugin{
 		$flags = 0;
 		$flags |= $issuer->entity->fire > 0 ? 1:0;
 		$flags |= ($issuer->entity->crouched === true ? 0b10:0) << 1;
-		$flags |= ($this->entity->inAction === true ? 0b10000:0);
+		$flags |= ($issuer->entity->inAction === true ? 0b10000:0);
 		$d = array(
 			0 => array("type" => 0, "value" => $flags),
 			1 => array("type" => 1, "value" => $issuer->entity->air),
